@@ -23,11 +23,13 @@ import './App.css';
 //   );
 // }
 
+
 function App() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [textInput, setTextInput] = useState('');
   const [textResult, setTextResult] = useState(null);
+  // Hanya logreg/tfidf
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -71,8 +73,10 @@ function App() {
     <div className="App" style={{ padding: "20px" }}>
       <h1>Uji Koneksi ke Backend / Klasifikasi</h1>
 
+
       <section style={{ marginBottom: '1.5rem' }}>
         <h2>1) Prediksi dari Teks</h2>
+  {/* Hanya logreg/tfidf */}
         <textarea value={textInput} onChange={e => setTextInput(e.target.value)} rows={6} style={{ width: '100%' }} placeholder="Tempel atau ketik teks jurnal di sini..." />
         <button onClick={handleTextPredict} style={{ marginTop: '0.5rem' }}>Prediksi Teks</button>
 

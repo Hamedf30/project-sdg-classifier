@@ -1,0 +1,129 @@
+<html>
+<head>
+    <title>SDGs Classifier</title>
+    <link rel="stylesheet" href="style.css">                        
+</head>
+<body>
+    <div class="header text-style">
+        <img src="image/unp.png" alt="logo" class="logo">
+        <h1>SDGs Label Detector</h1>
+    </div>
+    <div class="main">
+        <div class="white-box">
+            <div class="welcome-section">
+                <h2>Welcome to SDGs Label Detector</h2>
+                <p>Choose your preferred input method to detect Sustainable Development Goals</p>
+            </div>
+            <div class="option-cards">
+                <div class="card" onclick="showSection('text')">
+                    <div class="card-icon">📝</div>
+                    <h3>Start Text Analysis</h3>
+                </div>
+                <div class="card" onclick="showSection('upload')">
+                    <div class="card-icon">📄</div>
+                    <h3>Upload Document</h3>
+                </div>
+            </div>
+            <!-- Text Analysis Section -->
+            <div id="textSection" class="text-input-section" style="display:none;">
+                <h3>Quick Text Analysis</h3>
+                <form action="/analyze" method="post">
+                    <div class="input-group">
+                        <textarea name="text" placeholder="Enter your text here..." required></textarea>
+                    </div>
+                    <button type="submit" class="analyze-button">Analyze</button>
+                </form>
+            </div>
+            <!-- Upload Document Section -->
+            <div id="uploadSection" class="upload-section" style="display:none;">
+                <h3>Upload Document</h3>
+    <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+        <div class="upload-col">
+            <input type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" required class="pretty-file-input">
+            <button type="submit" class="upload-button">
+                <span class="button-icon">🚀</span>
+                Upload & Analyze
+            </button>
+        </div>
+        <div class="selected-file" id="selectedFile" style="display: none;">
+            <div class="file-info">
+                <span class="file-icon">📄</span>
+                <span class="file-name" id="fileName"></span>
+                <button type="button" class="remove-file" onclick="removeFile()">✕</button>
+            </div>
+        </div>
+    </form>
+</div>
+            <div id="sdgsImages" class="sdgs-images-container" style="display:none;">
+                <div class="sdgs-row">
+                    <!-- Baris 1: 9 gambar -->
+                    <img src="image/Sustainable_Development_Goal_01NoPoverty.svg.webp" class="sdgs-img" alt="SDG 1">
+                    <img src="image/Sustainable_Development_Goal_02ZeroHunger.svg.png" class="sdgs-img" alt="SDG 2">
+                    <img src="image/Sustainable_Development_Goal_03GoodHealth.svg.png" class="sdgs-img" alt="SDG 3">
+                    <img src="image/Sustainable_Development_Goal_04QualityEducation.svg.png" class="sdgs-img" alt="SDG 4">
+                    <img src="image/Sustainable_Development_Goal_05GenderEquality.svg.png" class="sdgs-img" alt="SDG 5">
+                    <img src="image/Sustainable_Development_Goal_06CleanWaterSanitation.svg.png" class="sdgs-img" alt="SDG 6">
+                    <img src="image/Sustainable_Development_Goal_07CleanEnergy.svg.png" class="sdgs-img" alt="SDG 7">
+                    <img src="image/Sustainable_Development_Goal_08DecentWork.svg.png" class="sdgs-img" alt="SDG 8">
+                    <img src="image/Sustainable_Development_Goal_09Industry.svg.png" class="sdgs-img" alt="SDG 9">
+                </div>
+                <div class="sdgs-row">
+                     <!-- Baris 2: 8 gambar -->
+                    <img src="image/Sustainable_Development_Goal_10ReducedInequalities.svg.png" class="sdgs-img" alt="SDG 10">
+                    <img src="image/Sustainable_Development_Goal_11SustainableCities.svg.png" class="sdgs-img" alt="SDG 11">
+                    <img src="image/Sustainable_Development_Goal_12ResponsibleConsumption.svg.png" class="sdgs-img" alt="SDG 12">
+                    <img src="image/Sustainable_Development_Goal_13Climate.svg.png" class="sdgs-img" alt="SDG 13">
+                    <img src="image/Sustainable_Development_Goal_14LifeBelowWater.svg.png" class="sdgs-img" alt="SDG 14">
+                    <img src="image/Sustainable_Development_Goal_15LifeOnLand.svg.png" class="sdgs-img" alt="SDG 15">
+                    <img src="image/Sustainable_Development_Goal_16PeaceJusticeInstitutions.svg.png" class="sdgs-img" alt="SDG 16">
+                    <img src="image/Sustainable_Development_Goal_17Partnerships.svg.png" class="sdgs-img" alt="SDG 17">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showSection(type) {
+            document.getElementById('textSection').style.display = (type === 'text') ? 'block' : 'none';
+            document.getElementById('uploadSection').style.display = (type === 'upload') ? 'block' : 'none';
+            document.getElementById('sdgsImages').style.display = 'none';
+        }
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        if(fileInput){
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('selectedFile').style.display = 'block';
+                }
+            });
+        }
+        // Remove file function
+        function removeFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFile').style.display = 'none';
+        }
+        // Tampilkan gambar SDGs setelah klik Analyze atau Upload & Analyze
+        document.addEventListener('DOMContentLoaded', function() {
+            // Untuk text analysis
+            const textForm = document.querySelector('#textSection form');
+            if(textForm){
+                textForm.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    document.getElementById('sdgsImages').style.display = 'flex';
+                    // ...proses analisis bisa ditambahkan di sini...
+                });
+            }
+            // Untuk upload
+            const uploadForm = document.querySelector('#uploadSection form');
+            if(uploadForm){
+                uploadForm.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    document.getElementById('sdgsImages').style.display = 'flex';
+                    // ...proses upload bisa ditambahkan di sini...
+                });
+            }
+        });
+    </script>
+</body>
+</html>
