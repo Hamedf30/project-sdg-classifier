@@ -1,86 +1,90 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
   const [file, setFile] = useState(null);
+  const [textInput, setTextInput] = useState("");
   const [result, setResult] = useState(null);
-  const [textInput, setTextInput] = useState('');
   const [textResult, setTextResult] = useState(null);
-  // Hanya logreg/tfidf
+  const [activeSection, setActiveSection] = useState(null);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
-  const handleUpload = async () => {
+  const handleUpload = async (e) => {
+    e.preventDefault();
     if (!file) return alert("Pilih file dulu!");
-
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       const res = await fetch("http://127.0.0.1:8000/upload", {
         method: "POST",
         body: formData,
       });
       const data = await res.json();
-      // backend returns { filename, result }
       setResult(data);
     } catch (err) {
       console.error("Upload error:", err);
     }
   };
 
-  const handleTextPredict = async () => {
-    if (!textInput || textInput.trim() === '') return alert('Masukkan teks terlebih dulu');
+  const handleTextPredict = async (e) => {
+    e.preventDefault();
+    if (!textInput.trim()) return alert("Masukkan teks terlebih dulu");
     try {
-      const res = await fetch('http://127.0.0.1:8000/predict', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: textInput }),
       });
       const data = await res.json();
       setTextResult(data);
     } catch (err) {
-      console.error('Predict error:', err);
+      console.error("Predict error:", err);
     }
   };
 
   return (
-    <div className="App" style={{ padding: "20px" }}>
-      <h1>Uji Koneksi ke Backend / Klasifikasi</h1>
+    <div className="app">
+      {/* Header */}
+      <header className="header">
+        <img src="/Padang_State_University_logo.png" alt="logo" className="logo" />
+        <h1>SDGs Label Detector</h1>
+      </header>
 
+      {/* Main */}
+      <main className="main">
+        <div className="white-box">
+          <div className="welcome-section">
+            <h2>Welcome to SDGs Label Detector</h2>
+            <p>Choose your preferred input method to detect Sustainable Development Goals</p>
+          </div>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2>1) Prediksi dari Teks</h2>
-  {/* Hanya logreg/tfidf */}
-        <textarea value={textInput} onChange={e => setTextInput(e.target.value)} rows={6} style={{ width: '100%' }} placeholder="Tempel atau ketik teks jurnal di sini..." />
-        <button onClick={handleTextPredict} style={{ marginTop: '0.5rem' }}>Prediksi Teks</button>
+          {/* Option Cards */}
+          <div className="option-cards">
+            <div className="card" onClick={() => setActiveSection("text")}>
+              <div className="card-icon">📝</div>
+              <h3>Start Text Analysis</h3>
+            </div>
+            <div className="card" onClick={() => setActiveSection("upload")}>
+              <div className="card-icon">📄</div>
+              <h3>Upload Document</h3>
+            </div>
+          </div>
 
-        {textResult && (
+          {/* Text Section */}
+          {activeSection === "text" && (
+            <div className="text-input-section">
+              <h3>Quick Text Analysis</h3>
+              <form onSubmit={handleTextPredict}>
+                <textarea
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  placeholder="Enter your text here..."
+                  required
+                />
+                <button type="submit" className="analyze-button">Analyze</button>
+              </form>
+              {textResult && (
           <div style={{ marginTop: '0.75rem' }}>
             <h4>Hasil Prediksi Teks</h4>
             {/* multi-label response has predicted_labels & probabilities & top_features per label */}
@@ -129,14 +133,24 @@ function App() {
             )}
           </div>
         )}
-      </section>
+            </div>
+          )}
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2>2) Upload Jurnal (PDF)</h2>
-        <input type="file" accept=".pdf" onChange={handleFileChange} />
-        <button onClick={handleUpload} style={{ marginLeft: '0.5rem' }}>Upload</button>
-
-        {result && (
+          {/* Upload Section */}
+          {activeSection === "upload" && (
+            <div className="upload-section">
+              <h3>Upload Document</h3>
+              <form onSubmit={handleUpload}>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                  className="pretty-file-input"
+                  required
+                />
+                <button type="submit" className="upload-button">🚀 Upload & Analyze</button>
+              </form>
+              {result && (
           <div style={{ marginTop: '20px' }}>
             <h4>Hasil Upload</h4>
             <p>Filename: {result.filename}</p>
@@ -185,10 +199,17 @@ function App() {
             )}
           </div>
         )}
-      </section>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>© 2025 SDGs Label Detector | Universitas Negeri Padang</p>
+      </footer>
     </div>
   );
 }
-
 
 export default App;

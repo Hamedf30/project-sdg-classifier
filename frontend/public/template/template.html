@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SDGs Classifier</title>
+    <style>
+        body {
+            background: #e9ecef;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header, .footer {
+            background-color: #002D62;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header .logo {
+            width: 55px;
+            height: 55px;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .footer {
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: auto; /* biar nempel ke bawah */
+        }
+        .main {
+            flex: 1; /* isi ruang di antara header & footer */
+            padding: 0;
+        }
+        .white-box {
+            background: #fff;
+            padding: 24px 18px;
+            margin-bottom: 50px;
+            border-radius: 16px;
+            position: relative;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            max-width: 900px;
+            width: 98%;
+        }
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .welcome-section h2 {
+            color: #002D62;
+            font-size: 1.9em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .welcome-section p {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        .option-cards {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #f7f7f7;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 30px;
+            min-width: 250px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            font-size: 1rem;
+            margin: 4px 0 0 0;
+        }
+        .text-input-section, .upload-section {
+            text-align: center;
+            padding: 5px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .text-input-section h3, .upload-section h3 {
+            color: #002D62;
+            font-size: 1 em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .input-group textarea {
+            width: 550px;         /* Lebar sesuai keinginan, misal 400px */
+            min-width: 200px;
+            max-width: 100%;
+            padding: 10px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            outline: none;
+            height: 200px;         /* Atur tinggi jika ingin lebih pendek */
+            resize: horizontal;   /* Boleh diubah ukurannya secara horizontal */
+        }
+        .analyze-button, .upload-button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .analyze-button:hover, .upload-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+        }
+        .pretty-file-input {
+            font-size: 1em;
+            border-radius: 20px;
+            border: 1.5px solid #e9ecef;
+            padding: 6px 12px;
+            background: #fff;
+            color: #002D62;
+            width: 260px;
+        }
+        .pretty-file-input::-webkit-file-upload-button {
+            background: linear-gradient(135deg, #002D62 0%, #1e4a8a 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 22px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        .pretty-file-input::-webkit-file-upload-button:hover {
+            background: linear-gradient(135deg, #1e4a8a 0%, #002D62 100%);
+        }
+        .selected-file {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            text-align: left;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .file-name { font-weight: 600; color: #155724; }
+        .remove-file {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .remove-file:hover { background: #c82333; transform: scale(1.1); }
+        .sdgs-images-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 12px 0 0 0;
+            width: 100%;
+        }
+        .sdgs-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .sdgs-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="image/unp.png" alt="logo" class="logo">
+        <h1>SDGs Label Detector</h1>
+    </div>
+    <div class="main">
+        <div class="white-box">
+            <div class="welcome-section">
+                <h2>Welcome to SDGs Label Detector</h2>
+                <p>Choose your preferred input method to detect Sustainable Development Goals</p>
+            </div>
+            <div class="option-cards">
+                <div class="card" onclick="showSection('text')">
+                    <div class="card-icon">📝</div>
+                    <h3>Start Text Analysis</h3>
+                </div>
+                <div class="card" onclick="showSection('upload')">
+                    <div class="card-icon">📄</div>
+                    <h3>Upload Document</h3>
+                </div>
+            </div>
+            <!-- Text Section -->
+            <div id="textSection" class="text-input-section" style="display:none;">
+                <h3>Quick Text Analysis</h3>
+                <form action="/analyze" method="post">
+                    <div class="input-group">
+                        <textarea name="text" placeholder="Enter your text here..." required></textarea>
+                    </div>
+                    <button type="submit" class="analyze-button">Analyze</button>
+                </form>
+            </div>
+            <!-- Upload Section -->
+            <div id="uploadSection" class="upload-section" style="display:none;">
+                <h3>Upload Document</h3>
+                <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                    <div class="upload-col">
+                        <input type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" required class="pretty-file-input">
+                        <button type="submit" class="upload-button">🚀 Upload & Analyze</button>
+                    </div>
+                    <div class="selected-file" id="selectedFile" style="display: none;">
+                        <div class="file-info">
+                            <span class="file-icon">📄</span>
+                            <span class="file-name" id="fileName"></span>
+                            <button type="button" class="remove-file" onclick="removeFile()">✕</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- SDGs Images -->
+            <div id="sdgsImages" class="sdgs-images-container" style="display:none;">
+                <div class="sdgs-row">
+                    <img src="image/Sustainable_Development_Goal_01NoPoverty.svg.webp" class="sdgs-img" alt="SDG 1">
+                    <img src="image/Sustainable_Development_Goal_02ZeroHunger.svg.png" class="sdgs-img" alt="SDG 2">
+                    <img src="image/Sustainable_Development_Goal_03GoodHealth.svg.png" class="sdgs-img" alt="SDG 3">
+                    <img src="image/Sustainable_Development_Goal_04QualityEducation.svg.png" class="sdgs-img" alt="SDG 4">
+                </div>
+                <div class="sdgs-row">
+                    <img src="image/Sustainable_Development_Goal_05GenderEquality.svg.png" class="sdgs-img" alt="SDG 5">
+                    <img src="image/Sustainable_Development_Goal_06CleanWaterSanitation.svg.png" class="sdgs-img" alt="SDG 6">
+                    <img src="image/Sustainable_Development_Goal_07CleanEnergy.svg.png" class="sdgs-img" alt="SDG 7">
+                    <img src="image/Sustainable_Development_Goal_08DecentWork.svg.png" class="sdgs-img" alt="SDG 8">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 SDGs Label Detector | Universitas Negeri Padang</p>
+    </div>
+
+    <script>
+        function showSection(type) {
+            document.getElementById('textSection').style.display = (type === 'text') ? 'block' : 'none';
+            document.getElementById('uploadSection').style.display = (type === 'upload') ? 'block' : 'none';
+            document.getElementById('sdgsImages').style.display = 'none';
+        }
+        const fileInput = document.getElementById('fileInput');
+        if(fileInput){
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('selectedFile').style.display = 'block';
+                }
+            });
+        }
+        function removeFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFile').style.display = 'none';
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const textForm = document.querySelector('#textSection form');
+            if(textForm){
+                textForm.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    document.getElementById('sdgsImages').style.display = 'flex';
+                });
+            }
+            const uploadForm = document.querySelector('#uploadSection form');
+            if(uploadForm){
+                uploadForm.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    document.getElementById('sdgsImages').style.display = 'flex';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

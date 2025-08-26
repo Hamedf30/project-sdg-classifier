@@ -1,38 +1,207 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+body {
+  background: #e9ecef;
+  margin: 0;
+  font-family: Arial, sans-serif;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header & Footer */
+.header, .footer {
+  background-color: #002D62;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .logo {
+  width: 55px;
+  height: 55px;
+}
+
+.header h1 {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.footer {
+  justify-content: center;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+/* Main & Card */
+.main {
+  flex: 1;
+  padding: 0;
+}
+
+.white-box {
+  background: #fff;
+  padding: 24px 18px;
+  margin-bottom: 50px;
+  border-radius: 16px;
+  position: relative;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  max-width: 900px;
+  width: 98%;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.welcome-section h2 {
+  color: #002D62;
+  font-size: 1.9em;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.welcome-section p {
+  color: #666;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+/* Option Cards */
+.option-cards {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: #f7f7f7;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 30px;
+  min-width: 250px;
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  font-size: 1rem;
+  margin: 4px 0 0 0;
+}
+
+/* Text Input & Upload */
+.text-input-section, .upload-section {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 20px;
+  border: 2px solid #e9ecef;
+  margin-bottom: 16px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-input-section h3, .upload-section h3 {
+  color: #002D62;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.text-input-section textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 15px;
+  font-size: 1em;
+  height: 200px;
+  resize: vertical;
+}
+
+.analyze-button, .upload-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(40,167,69,0.3);
+  margin-top: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.analyze-button:hover, .upload-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+  background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* File Input */
+.pretty-file-input {
+  font-size: 1em;
+  border-radius: 20px;
+  border: 1.5px solid #e9ecef;
+  padding: 6px 12px;
+  background: #fff;
+  color: #002D62;
+  width: 260px;
+}
+
+.pretty-file-input::-webkit-file-upload-button {
+  background: linear-gradient(135deg, #002D62 0%, #1e4a8a 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 22px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-right: 10px;
+}
+
+.pretty-file-input::-webkit-file-upload-button:hover {
+  background: linear-gradient(135deg, #1e4a8a 0%, #002D62 100%);
+}
+
+/* Result Box */
+.result-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9fafb;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  text-align: left;
+  font-family: monospace;
 }
