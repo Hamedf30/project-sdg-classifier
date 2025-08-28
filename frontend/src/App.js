@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Plot from 'react-plotly.js';
 import "./App.css";
 
 function App() {
@@ -85,54 +86,72 @@ function App() {
                 <button type="submit" className="analyze-button">Analyze</button>
               </form>
               {textResult && (
-          <div style={{ marginTop: '0.75rem' }}>
-            <h4>Hasil Prediksi Teks</h4>
-            {/* multi-label response has predicted_labels & probabilities & top_features per label */}
-            {typeof textResult.predicted_labels !== 'undefined' ? (
-              <>
-                <p>Predicted labels: <b>{(textResult.predicted_labels || []).join(', ') || 'Tidak ada'}</b></p>
-                <div>
-                  <p>Probabilities:</p>
-                  <ul>
-                    {Object.entries(textResult.probabilities || {}).map(([k, v]) => (
-                      <li key={k}>{k}: {v.toFixed ? v.toFixed(3) : String(v)}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p>Faktor (top features):</p>
-                  {/* top_features may be an object {label: [feats]} or an array */}
-                  {Array.isArray(textResult.top_features) ? (
-                    <ul>{textResult.top_features.map((f, i) => <li key={i}>{f}</li>)}</ul>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <h4>Hasil Prediksi Teks</h4>
+                  {typeof textResult.predicted_labels !== 'undefined' ? (
+                    (() => {
+                      // sort by probability descending
+                      const probEntries = Object.entries(textResult.probabilities || {});
+                      const sorted = probEntries.sort((a, b) => b[1] - a[1]);
+                      const top3 = sorted.slice(0, 3);
+                      return (
+                        <>
+                          <p>Top 3 Predicted Labels:</p>
+                          <ol style={{ fontWeight: 'bold', marginBottom: 8 }}>
+                            {top3.map(([label, prob], idx) => (
+                              <li key={label}>{label} ({prob.toFixed(3)})</li>
+                            ))}
+                          </ol>
+                          <div style={{ maxWidth: 500 }}>
+                            <Plot
+                              data={[{
+                                type: 'bar',
+                                orientation: 'h',
+                                x: sorted.map(([, v]) => v),
+                                y: sorted.map(([k]) => k),
+                                marker: { color: '#2563eb' },
+                              }]}
+                              layout={{
+                                title: 'Probabilities per SDG',
+                                xaxis: { title: 'Probability', range: [0, 1] },
+                                yaxis: { title: 'SDG', automargin: true },
+                                height: 350,
+                                margin: { l: 60, r: 20, t: 40, b: 40 },
+                              }}
+                              config={{ displayModeBar: false }}
+                            />
+                          </div>
+                          <div style={{ marginTop: 12 }}>
+                            <p style={{ fontWeight: 500 }}>Top Features per Label:</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+                              {Object.entries(textResult.top_features || {}).map(([label, feats]) => (
+                                <div key={label} style={{ minWidth: 120, background: '#f3f4f6', borderRadius: 8, padding: 8 }}>
+                                  <b>{label}</b>
+                                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                                    {(feats || []).slice(0, 5).map((f, i) => <li key={i}>{f}</li>)}
+                                  </ul>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()
                   ) : (
-                    <div>
-                      {Object.entries(textResult.top_features || {}).map(([label, feats]) => (
-                        <div key={label} style={{ marginBottom: '0.5rem' }}>
-                          <b>{label}</b>
-                          <ul>
-                            {(feats || []).map((f, i) => <li key={i}>{f}</li>)}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
+                    // legacy single-label response
+                    <>
+                      <p>Prediction (relevan ke SDG): <b>{textResult.prediction ? 'Ya' : 'Tidak'}</b></p>
+                      <p>Probability: <b>{(textResult.probability || 0).toFixed(3)}</b></p>
+                      <div>
+                        <p>Faktor (top features):</p>
+                        <ul>
+                          {(textResult.top_features || []).map((f, i) => <li key={i}>{f}</li>)}
+                        </ul>
+                      </div>
+                    </>
                   )}
                 </div>
-              </>
-            ) : (
-              // legacy single-label response
-              <>
-                <p>Prediction (relevan ke SDG): <b>{textResult.prediction ? 'Ya' : 'Tidak'}</b></p>
-                <p>Probability: <b>{(textResult.probability || 0).toFixed(3)}</b></p>
-                <div>
-                  <p>Faktor (top features):</p>
-                  <ul>
-                    {(textResult.top_features || []).map((f, i) => <li key={i}>{f}</li>)}
-                  </ul>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+              )}
             </div>
           )}
 
@@ -151,54 +170,69 @@ function App() {
                 <button type="submit" className="upload-button">🚀 Upload & Analyze</button>
               </form>
               {result && (
-          <div style={{ marginTop: '20px' }}>
-            <h4>Hasil Upload</h4>
-            <p>Filename: {result.filename}</p>
-            {result.result && (
-              <>
-                {typeof result.result.predicted_labels !== 'undefined' ? (
-                  <>
-                    <p>Predicted labels: <b>{(result.result.predicted_labels || []).join(', ') || 'Tidak ada'}</b></p>
-                    <div>
-                      <p>Probabilities:</p>
-                      <ul>
-                        {Object.entries(result.result.probabilities || {}).map(([k, v]) => (
-                          <li key={k}>{k}: {v.toFixed ? v.toFixed(3) : String(v)}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p>Faktor (top features):</p>
-                      {Array.isArray(result.result.top_features) ? (
-                        <ul>{result.result.top_features.map((f, i) => <li key={i}>{f}</li>)}</ul>
-                      ) : (
-                        <div>
-                          {Object.entries(result.result.top_features || {}).map(([label, feats]) => (
-                            <div key={label} style={{ marginBottom: '0.5rem' }}>
-                              <b>{label}</b>
-                              <ul>
-                                {(feats || []).map((f, i) => <li key={i}>{f}</li>)}
-                              </ul>
+                <div style={{ marginTop: '20px' }}>
+                  <h4>Hasil Upload</h4>
+                  <p>Filename: {result.filename}</p>
+                  {result.result && (
+                    typeof result.result.predicted_labels !== 'undefined' ? (() => {
+                      const probEntries = Object.entries(result.result.probabilities || {});
+                      const sorted = probEntries.sort((a, b) => b[1] - a[1]);
+                      const top3 = sorted.slice(0, 3);
+                      return (
+                        <>
+                          <p>Top 3 Predicted Labels:</p>
+                          <ol style={{ fontWeight: 'bold', marginBottom: 8 }}>
+                            {top3.map(([label, prob], idx) => (
+                              <li key={label}>{label} ({prob.toFixed(3)})</li>
+                            ))}
+                          </ol>
+                          <div style={{ maxWidth: 500 }}>
+                            <Plot
+                              data={[{
+                                type: 'bar',
+                                orientation: 'h',
+                                x: sorted.map(([, v]) => v),
+                                y: sorted.map(([k]) => k),
+                                marker: { color: '#2563eb' },
+                              }]}
+                              layout={{
+                                title: 'Probabilities per SDG',
+                                xaxis: { title: 'Probability', range: [0, 1] },
+                                yaxis: { title: 'SDG', automargin: true },
+                                height: 350,
+                                margin: { l: 60, r: 20, t: 40, b: 40 },
+                              }}
+                              config={{ displayModeBar: false }}
+                            />
+                          </div>
+                          <div style={{ marginTop: 12 }}>
+                            <p style={{ fontWeight: 500 }}>Top Features per Label:</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+                              {Object.entries(result.result.top_features || {}).map(([label, feats]) => (
+                                <div key={label} style={{ minWidth: 120, background: '#f3f4f6', borderRadius: 8, padding: 8 }}>
+                                  <b>{label}</b>
+                                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                                    {(feats || []).slice(0, 5).map((f, i) => <li key={i}>{f}</li>)}
+                                  </ul>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p>Prediction (relevan ke SDG): <b>{result.result.prediction ? 'Ya' : 'Tidak'}</b></p>
-                    <p>Probability: <b>{(result.result.probability || 0).toFixed(3)}</b></p>
-                    <p>Faktor (top features):</p>
-                    <ul>
-                      {(result.result.top_features || []).map((f, i) => <li key={i}>{f}</li>)}
-                    </ul>
-                  </>
-                )}
-              </>
-            )}
-          </div>
-        )}
+                          </div>
+                        </>
+                      );
+                    })() : (
+                      <>
+                        <p>Prediction (relevan ke SDG): <b>{result.result.prediction ? 'Ya' : 'Tidak'}</b></p>
+                        <p>Probability: <b>{(result.result.probability || 0).toFixed(3)}</b></p>
+                        <p>Faktor (top features):</p>
+                        <ul>
+                          {(result.result.top_features || []).map((f, i) => <li key={i}>{f}</li>)}
+                        </ul>
+                      </>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
