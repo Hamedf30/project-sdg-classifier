@@ -2,6 +2,26 @@ import React, { useState } from "react";
 import Plot from 'react-plotly.js';
 import "./App.css";
 
+// Mapping SDG label ke deskripsi
+const SDG_LABELS = {
+  '1': 'GOAL 1: No Poverty',
+  '2': 'GOAL 2: Zero Hunger',
+  '3': 'GOAL 3: Good Health and Well-being',
+  '4': 'GOAL 4: Quality Education',
+  '5': 'GOAL 5: Gender Equality',
+  '6': 'GOAL 6: Clean Water and Sanitation',
+  '7': 'GOAL 7: Affordable and Clean Energy',
+  '8': 'GOAL 8: Decent Work and Economic Growth',
+  '9': 'GOAL 9: Industry, Innovation and Infrastructure',
+  '10': 'GOAL 10: Reduced Inequality',
+  '11': 'GOAL 11: Sustainable Cities and Communities',
+  '12': 'GOAL 12: Responsible Consumption and Production',
+  '13': 'GOAL 13: Climate Action',
+  '14': 'GOAL 14: Life Below Water',
+  '15': 'GOAL 15: Life on Land',
+  '16': 'GOAL 16: Peace, Justice and Strong Institutions',
+};
+
 function App() {
   const [file, setFile] = useState(null);
   const [textInput, setTextInput] = useState("");
@@ -102,21 +122,36 @@ function App() {
                               <li key={label}>{label} ({prob.toFixed(3)})</li>
                             ))}
                           </ol>
-                          <div style={{ maxWidth: 500 }}>
+                          <div style={{ maxWidth: 700 }}>
                             <Plot
                               data={[{
                                 type: 'bar',
                                 orientation: 'h',
                                 x: sorted.map(([, v]) => v),
-                                y: sorted.map(([k]) => k),
+                                y: sorted.map(([k]) => SDG_LABELS[k] || k),
                                 marker: { color: '#2563eb' },
+                                hovertemplate: '%{y}: %{x:.3f}<extra></extra>',
                               }]}
                               layout={{
-                                title: 'Probabilities per SDG',
-                                xaxis: { title: 'Probability', range: [0, 1] },
-                                yaxis: { title: 'SDG', automargin: true },
-                                height: 350,
-                                margin: { l: 60, r: 20, t: 40, b: 40 },
+                                title: '',
+                                xaxis: {
+                                  title: 'Likelihood of SDG',
+                                  range: [0, 1],
+                                  showgrid: true,
+                                  gridcolor: '#e5e7eb',
+                                  zeroline: false,
+                                  tickformat: '.2f',
+                                  titlefont: { size: 16 },
+                                },
+                                yaxis: {
+                                  title: 'Sustainable development goals (SDG)',
+                                  automargin: true,
+                                  tickfont: { size: 13 },
+                                },
+                                height: 520,
+                                margin: { l: 220, r: 30, t: 20, b: 40 },
+                                plot_bgcolor: '#f9fafb',
+                                paper_bgcolor: '#fff',
                               }}
                               config={{ displayModeBar: false }}
                             />
@@ -186,21 +221,36 @@ function App() {
                               <li key={label}>{label} ({prob.toFixed(3)})</li>
                             ))}
                           </ol>
-                          <div style={{ maxWidth: 500 }}>
+                          <div style={{ maxWidth: 700 }}>
                             <Plot
                               data={[{
                                 type: 'bar',
                                 orientation: 'h',
                                 x: sorted.map(([, v]) => v),
-                                y: sorted.map(([k]) => k),
+                                y: sorted.map(([k]) => SDG_LABELS[k] || k),
                                 marker: { color: '#2563eb' },
+                                hovertemplate: '%{y}: %{x:.3f}<extra></extra>',
                               }]}
                               layout={{
-                                title: 'Probabilities per SDG',
-                                xaxis: { title: 'Probability', range: [0, 1] },
-                                yaxis: { title: 'SDG', automargin: true },
-                                height: 350,
-                                margin: { l: 60, r: 20, t: 40, b: 40 },
+                                title: '',
+                                xaxis: {
+                                  title: 'Likelihood of SDG',
+                                  range: [0, 1],
+                                  showgrid: true,
+                                  gridcolor: '#e5e7eb',
+                                  zeroline: false,
+                                  tickformat: '.2f',
+                                  titlefont: { size: 16 },
+                                },
+                                yaxis: {
+                                  title: 'Sustainable development goals (SDG)',
+                                  automargin: true,
+                                  tickfont: { size: 13 },
+                                },
+                                height: 520,
+                                margin: { l: 220, r: 30, t: 20, b: 40 },
+                                plot_bgcolor: '#f9fafb',
+                                paper_bgcolor: '#fff',
                               }}
                               config={{ displayModeBar: false }}
                             />
